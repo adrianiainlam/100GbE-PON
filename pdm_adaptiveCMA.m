@@ -3,7 +3,7 @@ function [x, y] = pdm_adaptiveCMA(rx, ry)
   %% Input: rx, ry: Both polarizations of received signal
   %% Output: x, y: Equalizaed signal
 
-  taps = 19; % Number of taps. Should be odd.
+  taps = 15; % Number of taps. Should be odd.
   mu = 1e-3; % Convergence parameter for gradient descent.
 
   hxx = zeros(taps, 1);
@@ -39,8 +39,10 @@ function [x, y] = pdm_adaptiveCMA(rx, ry)
         yp = [zeros((taps - 1) / 2 - it + 1, 1); ry(1:it + (taps - 1) / 2)];
       elseif it + (taps - 1) / 2 > numSymbs
         %% If near the end, append zeros
-        xp = [rx(it - (taps - 1) / 2 : end); zeros(it + (taps - 1) / 2 - numSymbs, 1)];
-        yp = [ry(it - (taps - 1) / 2 : end); zeros(it + (taps - 1) / 2 - numSymbs, 1)];
+        xp = [rx(it - (taps - 1) / 2 : end); ...
+              zeros(it + (taps - 1) / 2 - numSymbs, 1)];
+        yp = [ry(it - (taps - 1) / 2 : end); ...
+              zeros(it + (taps - 1) / 2 - numSymbs, 1)];
       else
         %% Just slice the signal
         xp = rx(it - (taps - 1) / 2 : it + (taps - 1) / 2);

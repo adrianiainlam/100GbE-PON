@@ -1,4 +1,4 @@
-function [xPN, phasenoise]  = phaseNoise(x, linewidthTx, linewidthLO, Tsamp)
+function [xPN, phasenoise] = phaseNoise(x, linewidthTx, linewidthLO, Tsamp)
   %% Simulates laser phase noise.
   %% Inputs:
   %%  - x: input waveform

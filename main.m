@@ -8,7 +8,6 @@ Rsym = 28e9; % symbol rate (sym/sec)
 zs = 42;
 plotlen = length(zs);
 
-
 %% Tx RRC filter properties
 rolloff = 0.25;
 span = 6; % filter span
@@ -54,7 +53,7 @@ Eperphoton = hc / (lambda * 1e-9); % J
 %% Stores result to be plotted
 ber = zeros(plotlen, 1);
 if plotlen > 1
-  fig = figure; hold on;
+  fig = figure;
 end
 
 %% sps and Tsamp change at Tx/Rx, save these for later.
@@ -118,16 +117,16 @@ for i = 1 : plotlen
   Tsamp = TsampOrig;
 
   %% Split-step Fourier
-  [A_x, A_y] = ssfs(A_x, A_y, D, lambda, z, dz, Tsamp, gamma, alpha);
+  [Al_x, Al_y] = ssfs(A_x, A_y, D, lambda, z, dz, Tsamp, gamma, alpha);
 
   %% Phase noise
-  A_x = phaseNoise(A_x, linewidthTx, linewidthLO, Tsamp);
-  A_y = phaseNoise(A_y, linewidthTx, linewidthLO, Tsamp);
+  Al_x = phaseNoise(Al_x, linewidthTx, linewidthLO, Tsamp);
+  Al_y = phaseNoise(Al_y, linewidthTx, linewidthLO, Tsamp);
 
   %% Here, only receive the central channel 1.
-  % For channel n: A_x .* conj(carriers(:, n)); etc.
-  r_x = rxFilter(A_x, rolloff, span, sps);
-  r_y = rxFilter(A_y, rolloff, span, sps);
+  % For channel n: Al_x .* conj(carriers(:, n)); etc.
+  r_x = rxFilter(Al_x, rolloff, span, sps);
+  r_y = rxFilter(Al_y, rolloff, span, sps);
   % Rx filter performs downsampling as well, keep track of this
   sps = 2;
   Tsamp = Tsamp * spsOrig / sps;
@@ -160,7 +159,7 @@ for i = 1 : plotlen
   [~, ber(i)] = biterr([data_x(:, 1); data_y(:, 1)], [demod_x; demod_y]);
 
   q = 20 * log10(erfcinv(2*ber)*sqrt(2));
-  if plotlen > 1
+  if i > 1
     figure(fig);
     plot(zs, q);
   end
